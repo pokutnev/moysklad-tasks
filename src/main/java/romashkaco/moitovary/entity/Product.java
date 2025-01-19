@@ -1,11 +1,19 @@
 package romashkaco.moitovary.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
+@Entity
 public class Product {
+    @Id
+    @GeneratedValue()
+    private UUID id;
     @Size(max = 255, message = "Product name must be less than 255")
     private String name;
     @Size(max = 4096, message = "Product description must be less than 4096")
@@ -24,6 +32,18 @@ public class Product {
     public Product(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public Product() {
+
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {

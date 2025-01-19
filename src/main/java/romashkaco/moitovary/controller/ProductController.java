@@ -24,13 +24,13 @@ public class ProductController {
     private final ProductRepository productRepository;
 
     @Autowired
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductRepository productRepositoryNew) {
+        this.productRepository = productRepositoryNew;
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productRepository.loadAll();
+        List<Product> products = productRepository.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
@@ -40,7 +40,7 @@ public class ProductController {
             if (name.length() > 255) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product name must be less than 255");
             }
-            Product product = productRepository.loadByName(name);
+            Product product = productRepository.findByName(name);
             if (product != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(product);
             }
@@ -50,7 +50,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody @Valid Product product) {
-        product = productRepository.createProduct(product);
+        product = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
@@ -60,7 +60,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product name must be less than 255");
         }
 
-        if (productRepository.updateProductName(productName, newName)) {
+        if (productRepository.updateName(productName, newName) > 0) {
             return ResponseEntity.status(HttpStatus.OK).body("Product has been updated");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -69,7 +69,7 @@ public class ProductController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleteProductName(@RequestParam String name) {
-        if (productRepository.deleteProductByName(name)) {
+        if (productRepository.deleteByName(name) > 0) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

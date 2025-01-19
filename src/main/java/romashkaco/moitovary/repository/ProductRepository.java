@@ -1,39 +1,22 @@
 package romashkaco.moitovary.repository;
 
-import org.springframework.stereotype.Repository;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import romashkaco.moitovary.entity.Product;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
-@Repository
-public class ProductRepository {
-    private List<Product> products = new ArrayList<>();
+public interface ProductRepository extends JpaRepository<Product, UUID> {
+    Product findByName(String name);
 
-    public List<Product> loadAll() {
-        return products;
-    }
+    @Transactional
+    @Modifying
+    @Query("UPDATE Product p set p.name = :newName where p.name = :oldName")
+    int updateName(@Param("oldName")String oldName, @Param("newName") String newName);
 
-    public Product loadByName(String name) {
-        return products.stream().filter(product -> product.getName().equals(name)).findFirst().orElse(null);
-    }
-
-    public Product createProduct(Product product) {
-        products.add(product);
-        return product;
-    }
-
-    public boolean updateProductName(String productName, String newName) {
-        for (Product product : products) {
-            if (product.getName().equals(productName)) {
-                product.setName(newName);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean deleteProductByName(String name) {
-        return products.removeIf(product -> product.getName().equals(name));
-    }
+    @Transactional
+    int deleteByName(String name);
 }
