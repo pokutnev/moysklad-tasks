@@ -34,8 +34,8 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<Object> getProductByName(@PathVariable String name) {
+    @GetMapping("/search")
+    public ResponseEntity<Object> getProductByName(@RequestParam String name) {
         if (name != null) {
             if (name.length() > 255) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product name must be less than 255");
