@@ -10,8 +10,6 @@ import romashkaco.moitovary.entity.Product;
 import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
-    Product findByName(String name);
-
     @Transactional
     @Modifying
     @Query("UPDATE Product p set p.name = :newName where p.name = :oldName")
@@ -19,4 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Transactional
     int deleteByName(String name);
+
+    @Query("select p from Product p where lower(p.name) like lower(:name)")
+    Product findByName(@Param("name") String name);
 }
