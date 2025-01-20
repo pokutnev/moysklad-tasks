@@ -48,6 +48,12 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
+    //    по названию или части названия товара
+    @GetMapping("/search/{searchedName}")
+    public ResponseEntity<List<Product>> searchProducts(@PathVariable String searchedName) {
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.findByNameContaining(searchedName));
+    }
+
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody @Valid Product product) {
         product = productRepository.save(product);
@@ -75,4 +81,5 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
 }
